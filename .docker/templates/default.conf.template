@@ -21,10 +21,6 @@ server {
     send_timeout          3600;
 
     location / {
-        index index.html;
-    }
-
-    location /api/ {
         proxy_redirect off;
         proxy_pass http://api/;
         proxy_set_header Host $host;
