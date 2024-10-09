@@ -1,0 +1,68 @@
+networks:
+  frontend:
+    external: true
+  app:
+    driver: bridge
+    internal: false
+  qdrantnet:
+    external: true
+
+services:
+  nginx:
+    image: nginxinc/nginx-unprivileged:alpine
+    restart: unless-stopped
+    networks:
+      - app
+      - frontend
+    depends_on:
+      - vectorstore
+    ports:
+      - '8080'
+    volumes:
+      - ./.docker/templates:/etc/nginx/templates:ro
+      - ./ui/src:/app
+    environment:
+      NGINX_WEB_ROOT: /app
+      NGINX_PORT: 8080
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=frontend"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-http.rule=Host(`${COMPOSE_SERVER_DOMAIN}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-http.entrypoints=web"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-http.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${COMPOSE_SERVER_DOMAIN}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.entrypoints=websecure"
+  api:
+    build: 
+      context: src
+      dockerfile: Dockerfile
+    networks:
+      - app
+    ports:
+      - "8000"
+    depends_on:
+      - whisper
+    volumes:
+      - ./src:/app
+
+  whisper:
+    image: onerahmet/openai-whisper-asr-webservice:v1.4.1-gpu
+    restart: unless-stopped
+    networks:
+      - app
+    ports:
+      - '9000'
+    environment:
+      - ASR_ENGINE=faster_whisper
+      - ASR_MODEL=medium
+    volumes:
+      - .docker/data/whisper:/root/.cache/whisper
+    # Add support for GPU on the server.
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]

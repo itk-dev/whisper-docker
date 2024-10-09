@@ -1,0 +1,59 @@
+# itk-version: 3.2.1
+networks:
+  frontend:
+    external: true
+  app:
+    driver: bridge
+    internal: false
+
+services:
+  nginx:
+    image: nginxinc/nginx-unprivileged:alpine
+    networks:
+      - app
+      - frontend
+    depends_on:
+      - api
+    ports:
+      - '8080'
+    volumes:
+      - ./.docker/templates:/etc/nginx/templates:ro
+      - ./ui/src:/app
+    environment:
+      NGINX_WEB_ROOT: /app
+      NGINX_PORT: 8080
+      NGINX_MAX_BODY_SIZE: 15M
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=frontend"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${COMPOSE_DOMAIN}`)"
+#      HTTPS config - uncomment to enable redirect from :80 to :443
+#      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.middlewares=redirect-to-https"
+#      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+
+  api:
+    build: 
+      context: src
+      dockerfile: ./Dockerfile
+    command: "uvicorn index:app --host 0.0.0.0 --reload"
+    networks:
+      - app
+    ports:
+      - "8000"
+    depends_on:
+      - whisper
+    volumes:
+      - ./src:/app
+
+  whisper:
+    image: onerahmet/openai-whisper-asr-webservice:v1.4.1
+    networks:
+      - app
+      - frontend
+    ports:
+      - '9000'
+    environment:
+      - ASR_ENGINE=openai_whisper
+      - ASR_MODEL=large-v3
+    volumes:
+      - .docker/data/whisper:/root/.cache/whisper
