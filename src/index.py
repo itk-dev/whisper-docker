@@ -1,7 +1,14 @@
 import httpx
+import os
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Depends, Security
 from fastapi.responses import StreamingResponse, RedirectResponse
+from fastapi.security.api_key import APIKeyHeader
+from dotenv import load_dotenv
+
+API_KEY = os.getenv('API_KEY')
+API_KEY_NAME = "x-api-key"
+api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
 
 # Start the API
 app = FastAPI()
@@ -15,6 +22,14 @@ app.add_middleware(
     allow_methods=["POST", "OPTIONS"],
     allow_headers=["*"],
 )
+
+def get_api_key(api_key_header: str = Security(api_key_header)):
+    if api_key_header == API_KEY:
+        return api_key_header
+    else:
+        raise HTTPException(
+            status_code=403, detail="Could not validate credentials"
+        )
 
 @app.get("/health")
 def health():
@@ -30,7 +45,8 @@ async def whisper(
 #      language: Union[str, None] = Query(default=None, description="Language to use"),
 #      word_timestamps: bool = Query(default=False, description="Word level timestamps"),
 #      output: Union[str, None] = Query(default="txt", enum=["txt", "vtt", "srt", "tsv", "json"])
-):
+     api_key: str = Depends(get_api_key)
+    ):
     """
       This forwards the file upload request to whisper and therefor is is not
       possible to have the right swagger docs. See whisper API for
