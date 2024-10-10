@@ -4,8 +4,6 @@ networks:
   app:
     driver: bridge
     internal: false
-  qdrantnet:
-    external: true
 
 services:
   nginx:
@@ -15,7 +13,7 @@ services:
       - app
       - frontend
     depends_on:
-      - vectorstore
+      - api
     ports:
       - '8080'
     volumes:
