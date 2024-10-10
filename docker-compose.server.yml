@@ -41,6 +41,8 @@ services:
       - "8000"
     depends_on:
       - whisper
+    environment:
+      - "API_KEY=${API_KEY}"
     volumes:
       - ./src:/app
 

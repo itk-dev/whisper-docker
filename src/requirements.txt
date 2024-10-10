@@ -2,4 +2,3 @@ fastapi
 requests
 uvicorn[standard]
 httpx
-dotenv

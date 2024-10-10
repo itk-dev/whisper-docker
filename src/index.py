@@ -4,7 +4,6 @@ import os
 from fastapi import FastAPI, HTTPException, Request, Depends, Security
 from fastapi.responses import StreamingResponse, RedirectResponse
 from fastapi.security.api_key import APIKeyHeader
-from dotenv import load_dotenv
 
 API_KEY = os.getenv('API_KEY')
 API_KEY_NAME = "x-api-key"
