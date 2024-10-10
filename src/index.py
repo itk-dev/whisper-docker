@@ -54,7 +54,7 @@ async def whisper(
 
       <strong>CURL example:</strong>
       <pre>
-      curl -X 'POST' 'http://0.0.0.0:32811/whisper/asr?encode=true&task=transcribe&language=da&word_timestamps=false&output=json'
+      curl -X 'POST' 'http://whisper.local.itkdev.dk/api/whisper/asr?encode=true&task=transcribe&language=da&word_timestamps=false&output=json'
            -H 'accept: application/json'
            -H 'Content-Type: multipart/form-data'
            -F 'audio_file=@sample-0.mp3;type=audio/mpeg'</pre>
