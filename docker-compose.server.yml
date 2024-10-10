@@ -54,8 +54,8 @@ services:
     ports:
       - '9000'
     environment:
-      - ASR_ENGINE=faster_whisper
-      - ASR_MODEL=medium
+      - ASR_ENGINE=openai_whisper
+      - ASR_MODEL=large-v3
     volumes:
       - .docker/data/whisper:/root/.cache/whisper
     # Add support for GPU on the server.
