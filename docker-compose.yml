@@ -48,7 +48,7 @@ services:
       - ./src:/app
 
   whisper:
-    image: onerahmet/openai-whisper-asr-webservice:v1.4.1
+    image: onerahmet/openai-whisper-asr-webservice:v1.8.2
     networks:
       - app
       - frontend
