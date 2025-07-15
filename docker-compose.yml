@@ -43,19 +43,20 @@ services:
     depends_on:
       - whisper
     environment:
-      - "API_KEY=${API_KEY}"
+      API_KEY: ${API_KEY}
+      WHISPER_ENDPOINT: ${WHISPER_ENDPOINT:-http://whisper:9000}
     volumes:
       - ./src:/app
 
   whisper:
-    image: onerahmet/openai-whisper-asr-webservice:v1.8.2
+    image: onerahmet/openai-whisper-asr-webservice:v1.9.1
     networks:
       - app
       - frontend
     ports:
       - '9000'
     environment:
-      - ASR_ENGINE=openai_whisper
-      - ASR_MODEL=large-v3
+      ASR_ENGINE: ${ASR_ENGINE:-openai_whisper}
+      ASR_MODEL: ${ASR_MODEL:-large-v3}
     volumes:
       - .docker/data/whisper:/root/.cache/whisper
