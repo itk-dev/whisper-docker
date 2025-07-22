@@ -14,8 +14,6 @@ services:
       - frontend
     depends_on:
       - api
-    ports:
-      - '8080'
     volumes:
       - ./.docker/templates:/etc/nginx/templates:ro
       - ./src:/app
