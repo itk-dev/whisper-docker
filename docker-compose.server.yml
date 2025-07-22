@@ -18,7 +18,7 @@ services:
       - '8080'
     volumes:
       - ./.docker/templates:/etc/nginx/templates:ro
-      - ./ui/src:/app
+      - ./src:/app
     environment:
       NGINX_WEB_ROOT: /app
       NGINX_PORT: 8080
