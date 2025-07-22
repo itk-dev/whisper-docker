@@ -32,14 +32,13 @@ services:
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${COMPOSE_SERVER_DOMAIN}`)"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.entrypoints=websecure"
+
   api:
     build: 
       context: src
-      dockerfile: Dockerfile
+      dockerfile: ./Dockerfile
     networks:
       - app
-    ports:
-      - "8000"
     depends_on:
       - whisper
     environment:
@@ -53,8 +52,6 @@ services:
     restart: unless-stopped
     networks:
       - app
-    ports:
-      - '9000'
     environment:
       ASR_ENGINE: ${ASR_ENGINE:-openai_whisper}
       ASR_MODEL: ${ASR_MODEL:-large-v3}

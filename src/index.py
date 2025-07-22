@@ -214,7 +214,7 @@ async def transcribe_audio(
     if language:
         query_params["language"] = language
 
-    # Set output format to JSON
+    # Set the output format to JSON
     query_params["output"] = "json"
 
     # Set encoding to true to process through ffmpeg
@@ -243,8 +243,5 @@ async def transcribe_audio(
 
     # Format the response to match OpenAI's transcription API response format
     formatted_response = {"text": whisper_response.get("text", "")}
-
-    # Add any additional fields that might be present in the OpenAI response format
-    # based on the Whisper response
 
     return JSONResponse(content=formatted_response, status_code=200)
