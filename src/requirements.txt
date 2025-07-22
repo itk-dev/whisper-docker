@@ -3,3 +3,4 @@ requests
 uvicorn[standard]
 httpx
 python-multipart
+prometheus-fastapi-instrumentator

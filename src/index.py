@@ -15,6 +15,7 @@ from fastapi.responses import StreamingResponse, RedirectResponse, JSONResponse
 from fastapi.security.api_key import APIKeyHeader
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from typing import Optional
+from prometheus_fastapi_instrumentator import Instrumentator
 
 API_KEY = os.getenv("API_KEY")
 API_KEY_NAME = "x-api-key"
@@ -90,6 +91,16 @@ def get_bearer_token(
         raise HTTPException(status_code=403, detail="Could not validate credentials")
 
     return credentials.credentials
+
+
+# Initialize Prometheus monitoring
+Instrumentator().instrument(app).expose(
+    app,
+    include_in_schema=False,
+    dependencies=[
+        Depends(get_bearer_token, use_cache=False)
+    ],
+)
 
 
 @app.get("/", include_in_schema=False)
