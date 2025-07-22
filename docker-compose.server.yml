@@ -37,6 +37,7 @@ services:
     build: 
       context: src
       dockerfile: ./Dockerfile
+    restart: unless-stopped
     networks:
       - app
     depends_on:
